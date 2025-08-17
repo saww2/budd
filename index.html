@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Buddy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        beige: '#FAF5EE',
+                        softblue: '#A8D8EA',
+                        lightgreen: '#AAE3E2',
+                        darkbg: '#1E293B',
+                        darkcard: '#334155',
+                        pink: {
+                            400: '#F472B6',
+                            500: '#EC4899',
+                        },
+                        purple: {
+                            500: '#A855F7',
+                            400: '#C084FC',
+                        },
+                        teal: {
+                            300: '#5EEAD4',
+                        },
+                    },
+                    fontFamily: {
+                        handwritten: ['Gochi Hand', 'cursive'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .dark .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .playful-border {
+            border-radius: 20px;
+        }
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .add-button {
+            transition: all 0.2s ease;
+        }
+        .add-button:hover {
+            transform: scale(1.1);
+        }
+        .expense-item {
+            transition: all 0.3s ease;
+        }
+        .expense-item-enter {
+            animation: fadeIn 0.3s forwards, slideUp 0.3s forwards;
+        }
+        .expense-item-exit {
+            animation: fadeIn 0.3s reverse forwards, slideUp 0.3s reverse forwards;
+        }
+    </style>
+</head>
+<body class="h-full bg-beige dark:bg-darkbg transition-colors duration-300">
+    <div id="app" class="min-h-full flex flex-col">
+        <!-- Start Screen -->
+        <div id="start-screen" class="flex flex-col items-center justify-center h-full p-6">
+            <h1 class="text-5xl font-handwritten text-gray-800 dark:text-gray-200 mb-8 mt-20">Expense Buddy</h1>
+            <div class="flex-1 flex flex-col items-center justify-center w-full">
+                <div class="bg-white dark:bg-darkcard p-8 rounded-3xl card-shadow w-full max-w-md playful-border">
+                    <h2 class="text-3xl font-handwritten text-center text-gray-700 dark:text-gray-200 mb-6">Let's track your expenses!</h2>
+                    <button onclick="showAccountsScreen()" class="w-16 h-16 bg-gradient-to-br from-softblue to-lightgreen hover:from-blue-400 hover:to-teal-300 text-white rounded-full flex items-center justify-center transition-all duration-300 add-button mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 mt-auto mb-4">Your friendly expense tracker</p>
+        </div>
+
+        <!-- Accounts Screen -->
+        <div id="accounts-screen" class="hidden flex-col h-full p-6">
+            <div class="flex items-center mb-6">
+                <button onclick="showStartScreen()" class="icon-circle bg-softblue text-white mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <h1 class="text-3xl font-handwritten text-gray-800 dark:text-gray-200">My Expenses</h1>
+            </div>
+
+            <div class="bg-white dark:bg-darkcard p-6 rounded-3xl card-shadow mb-6 playful-border">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-medium text-gray-700 dark:text-gray-300">Total Salary</h2>
+                    <button id="edit-salary-btn" class="text-softblue dark:text-lightgreen font-medium">Edit</button>
+                </div>
+                <div id="salary-display" class="text-3xl font-bold text-gray-800 dark:text-white">$0.00</div>
+                <div id="salary-edit" class="hidden mt-2">
+                    <input type="number" id="salary-input" class="w-full p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Enter your salary">
+                    <div class="flex justify-end mt-2">
+                        <button onclick="saveSalary()" class="bg-lightgreen text-white px-4 py-2 rounded-xl">Save</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto mb-4">
+                <div id="expenses-list" class="space-y-3">
+                    <!-- Expenses will be added here dynamically -->
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkcard p-6 rounded-3xl card-shadow mb-6 playful-border">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-medium text-gray-700 dark:text-gray-300">Remaining Amount</h2>
+                    <div id="remaining-amount" class="text-3xl font-bold text-lightgreen dark:text-green-300">$0.00</div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkcard p-4 rounded-3xl card-shadow playful-border">
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="expense-name" class="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Item name">
+                    <input type="number" id="expense-amount" class="w-24 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Price">
+                    <button onclick="addExpense()" class="icon-circle bg-lightgreen text-white add-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settings-screen" class="hidden flex-col h-full p-6">
+            <div class="flex items-center mb-6">
+                <button onclick="showAccountsScreen()" class="icon-circle bg-softblue text-white mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <h1 class="text-3xl font-handwritten text-gray-800 dark:text-gray-200">Settings</h1>
+            </div>
+
+            <div class="bg-white dark:bg-darkcard p-6 rounded-3xl card-shadow mb-6 playful-border">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                        <span class="text-lg text-gray-700 dark:text-gray-300">Dark Mode</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="dark-mode-toggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-softblue"></div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mt-auto text-center text-gray-500 dark:text-gray-400 mb-4">
+                Expense Buddy v1.0
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bg-white dark:bg-darkcard p-3 flex justify-around card-shadow">
+            <button onclick="showAccountsScreen()" class="flex flex-col items-center">
+                <div class="w-12 h-12 bg-gradient-to-br from-softblue to-lightgreen rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                </div>
+                <span class="text-xs mt-1 text-softblue dark:text-lightgreen font-medium">Home</span>
+            </button>
+            <button onclick="showSettingsScreen()" class="flex flex-col items-center">
+                <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <span class="text-xs mt-1 text-pink-500 dark:text-purple-300 font-medium">Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // App state
+        let salary = 0;
+        let expenses = [];
+        let darkMode = false;
+
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const accountsScreen = document.getElementById('accounts-screen');
+        const settingsScreen = document.getElementById('settings-screen');
+        const salaryDisplay = document.getElementById('salary-display');
+        const salaryEdit = document.getElementById('salary-edit');
+        const editSalaryBtn = document.getElementById('edit-salary-btn');
+        const salaryInput = document.getElementById('salary-input');
+        const expensesList = document.getElementById('expenses-list');
+        const remainingAmount = document.getElementById('remaining-amount');
+        const expenseName = document.getElementById('expense-name');
+        const expenseAmount = document.getElementById('expense-amount');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+
+        // Initialize app
+        function init() {
+            loadData();
+            updateUI();
+            setupEventListeners();
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            const savedSalary = localStorage.getItem('expenseBuddySalary');
+            const savedExpenses = localStorage.getItem('expenseBuddyExpenses');
+            const savedDarkMode = localStorage.getItem('expenseBuddyDarkMode');
+
+            if (savedSalary) {
+                salary = parseFloat(savedSalary);
+            }
+
+            if (savedExpenses) {
+                expenses = JSON.parse(savedExpenses);
+            }
+
+            if (savedDarkMode === 'true') {
+                darkMode = true;
+                document.documentElement.classList.add('dark');
+                darkModeToggle.checked = true;
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('expenseBuddySalary', salary.toString());
+            localStorage.setItem('expenseBuddyExpenses', JSON.stringify(expenses));
+            localStorage.setItem('expenseBuddyDarkMode', darkMode.toString());
+        }
+
+        // Update UI based on current state
+        function updateUI() {
+            // Update salary display
+            salaryDisplay.textContent = `$${salary.toFixed(2)}`;
+            
+            // Update expenses list
+            expensesList.innerHTML = '';
+            expenses.forEach((expense, index) => {
+                const expenseItem = document.createElement('div');
+                expenseItem.className = 'expense-item bg-white dark:bg-darkcard p-4 rounded-2xl card-shadow flex justify-between items-center expense-item-enter';
+                expenseItem.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="icon-circle bg-softblue text-white mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-800 dark:text-gray-200">${expense.name}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">${new Date(expense.date).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-lg font-medium text-gray-800 dark:text-gray-200 mr-3">$${expense.amount.toFixed(2)}</span>
+                        <button onclick="removeExpense(${index})" class="icon-circle bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                expensesList.appendChild(expenseItem);
+            });
+            
+            // Update remaining amount
+            const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const remaining = salary - totalExpenses;
+            remainingAmount.textContent = `$${remaining.toFixed(2)}`;
+            
+            // Color remaining amount based on value
+            if (remaining < 0) {
+                remainingAmount.classList.remove('text-lightgreen', 'dark:text-green-300');
+                remainingAmount.classList.add('text-red-500', 'dark:text-red-400');
+            } else {
+                remainingAmount.classList.remove('text-red-500', 'dark:text-red-400');
+                remainingAmount.classList.add('text-lightgreen', 'dark:text-green-300');
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Edit salary button
+            editSalaryBtn.addEventListener('click', () => {
+                salaryEdit.classList.toggle('hidden');
+                salaryDisplay.classList.toggle('hidden');
+                salaryInput.value = salary;
+            });
+            
+            // Dark mode toggle
+            darkModeToggle.addEventListener('change', () => {
+                darkMode = darkModeToggle.checked;
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                saveData();
+            });
+        }
+
+        // Screen navigation functions
+        function showStartScreen() {
+            startScreen.classList.remove('hidden');
+            accountsScreen.classList.add('hidden');
+            settingsScreen.classList.add('hidden');
+        }
+
+        function showAccountsScreen() {
+            startScreen.classList.add('hidden');
+            accountsScreen.classList.remove('hidden');
+            settingsScreen.classList.add('hidden');
+            updateUI();
+        }
+
+        function showSettingsScreen() {
+            startScreen.classList.add('hidden');
+            accountsScreen.classList.add('hidden');
+            settingsScreen.classList.remove('hidden');
+        }
+
+        // Expense functions
+        function saveSalary() {
+            const newSalary = parseFloat(salaryInput.value) || 0;
+            salary = newSalary;
+            salaryEdit.classList.add('hidden');
+            salaryDisplay.classList.remove('hidden');
+            saveData();
+            updateUI();
+        }
+
+        function addExpense() {
+            const name = expenseName.value.trim();
+            const amount = parseFloat(expenseAmount.value) || 0;
+            
+            if (name && amount > 0) {
+                expenses.push({
+                    name,
+                    amount,
+                    date: new Date().toISOString()
+                });
+                
+                expenseName.value = '';
+                expenseAmount.value = '';
+                
+                saveData();
+                updateUI();
+            }
+        }
+
+        function removeExpense(index) {
+            expenses.splice(index, 1);
+            saveData();
+            updateUI();
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=Adelalanezi/expense-buddy" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>
