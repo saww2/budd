@@ -2,7 +2,9 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Expense Buddy</title>
@@ -88,13 +90,34 @@
         .expense-item-exit {
             animation: fadeIn 0.3s reverse forwards, slideUp 0.3s reverse forwards;
         }
-        /* iOS specific styles */
+        /* iPhone specific styles */
         @supports (-webkit-touch-callout: none) {
             input, select, textarea {
-                font-size: 16px !important;
+                font-size: 1rem !important;
             }
             input:focus, textarea:focus {
-                font-size: 16px !important;
+                font-size: 1rem !important;
+            }
+            
+            /* Minimum tap target size */
+            button, [role="button"], .icon-circle {
+                min-width: 44px;
+                min-height: 44px;
+            }
+            
+            /* Prevent zoom on input focus */
+            @media screen and (-webkit-min-device-pixel-ratio:0) {
+                input, textarea, select {
+                    font-size: 16px;
+                }
+            }
+        }
+        
+        /* Safe area insets for iPhone X and newer */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(12px, env(safe-area-inset-left));
+                padding-right: max(12px, env(safe-area-inset-right));
             }
         }
         
@@ -156,11 +179,11 @@
         }
     </style>
 </head>
-<body class="h-full bg-beige dark:bg-darkbg transition-colors duration-300">
-    <div id="app" class="min-h-full flex flex-col">
+<body class="h-full bg-beige dark:bg-darkbg transition-colors duration-300" style="min-height: -webkit-fill-available;">
+    <div id="app" class="min-h-full flex flex-col" style="min-height: -webkit-fill-available;">
         <!-- Start Screen -->
         <div id="start-screen" class="flex flex-col items-center justify-center h-full p-6">
-            <h1 class="text-4xl sm:text-5xl font-handwritten text-gray-800 dark:text-gray-200 mb-6 mt-10">Expense Buddy</h1>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-handwritten text-gray-800 dark:text-gray-200 mb-4 mt-6 sm:mt-10">Expense Buddy</h1>
             <div class="flex-1 flex flex-col items-center justify-center w-full">
                 <div class="bg-white dark:bg-darkcard p-6 sm:p-8 rounded-3xl card-shadow w-full max-w-md playful-border mx-4">
                     <h2 class="text-3xl font-handwritten text-center text-gray-700 dark:text-gray-200 mb-6">Let's track your expenses!</h2>
@@ -214,10 +237,12 @@
             </div>
 
             <div class="bg-white dark:bg-darkcard p-4 rounded-3xl card-shadow playful-border">
-                <div class="flex items-center space-x-2">
-                    <input type="text" id="expense-name" class="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white text-base" placeholder="Item name" inputmode="text">
-                    <input type="number" id="expense-amount" class="w-28 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white text-base" placeholder="Price" inputmode="decimal">
-                    <button onclick="addExpense()" class="icon-circle bg-lightgreen text-white add-button" style="width: 56px; height: 56px; min-width: 56px; min-height: 56px;">
+                <div class="flex flex-col space-y-2">
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="expense-name" class="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white text-base min-h-[44px]" placeholder="Item name" inputmode="text">
+                        <input type="number" id="expense-amount" class="w-28 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white text-base min-h-[44px]" placeholder="Price" inputmode="decimal">
+                    </div>
+                    <button onclick="addExpense()" class="icon-circle bg-lightgreen text-white add-button mx-auto" style="width: 56px; height: 56px; min-width: 56px; min-height: 56px;">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -258,24 +283,26 @@
         </div>
 
         <!-- Bottom Navigation -->
-        <div class="bg-white dark:bg-darkcard p-2 sm:p-3 flex justify-around card-shadow safe-area-padding bottom-navigation">
-            <button onclick="showAccountsScreen()" class="flex flex-col items-center">
-                <div class="w-12 h-12 bg-gradient-to-br from-softblue to-lightgreen rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                </div>
-                <span class="text-xs mt-1 text-softblue dark:text-lightgreen font-medium">Home</span>
-            </button>
-            <button onclick="showSettingsScreen()" class="flex flex-col items-center">
-                <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                </div>
-                <span class="text-xs mt-1 text-pink-500 dark:text-purple-300 font-medium">Settings</span>
-            </button>
+        <div class="bg-white dark:bg-darkcard p-2 card-shadow safe-area-padding bottom-navigation" style="padding-bottom: env(safe-area-inset-bottom); margin-top: auto;">
+            <div class="flex flex-col items-center space-y-2">
+                <button onclick="showAccountsScreen()" class="flex flex-col items-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-softblue to-lightgreen rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                    </div>
+                    <span class="text-xs mt-1 text-softblue dark:text-lightgreen font-medium">Home</span>
+                </button>
+                <button onclick="showSettingsScreen()" class="flex flex-col items-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <span class="text-xs mt-1 text-pink-500 dark:text-purple-300 font-medium">Settings</span>
+                </button>
+            </div>
         </div>
     </div>
 
