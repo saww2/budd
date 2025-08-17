@@ -2,7 +2,9 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Expense Buddy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -86,14 +88,37 @@
         .expense-item-exit {
             animation: fadeIn 0.3s reverse forwards, slideUp 0.3s reverse forwards;
         }
-        /* Prevent zooming on input focus on mobile */
-        input, select, textarea {
-            font-size: 16px;
+        /* iOS specific styles */
+        @supports (-webkit-touch-callout: none) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+            input:focus, textarea:focus {
+                font-size: 16px !important;
+            }
         }
         
         /* Better touch targets */
         button, [role="button"] {
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Safe area insets for iPhone notch */
+        body {
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+        
+        /* Prevent iOS form zooming */
+        input, textarea, select {
+            font-size: 16px;
+            max-height: 3em;
+        }
+        
+        /* Fix for iOS input shadow */
+        input, textarea {
+            -webkit-appearance: none;
+            border-radius: 0;
         }
     </style>
 </head>
@@ -101,9 +126,9 @@
     <div id="app" class="min-h-full flex flex-col">
         <!-- Start Screen -->
         <div id="start-screen" class="flex flex-col items-center justify-center h-full p-6">
-            <h1 class="text-5xl font-handwritten text-gray-800 dark:text-gray-200 mb-8 mt-20">Expense Buddy</h1>
+            <h1 class="text-4xl sm:text-5xl font-handwritten text-gray-800 dark:text-gray-200 mb-6 mt-10">Expense Buddy</h1>
             <div class="flex-1 flex flex-col items-center justify-center w-full">
-                <div class="bg-white dark:bg-darkcard p-8 rounded-3xl card-shadow w-full max-w-md playful-border">
+                <div class="bg-white dark:bg-darkcard p-6 sm:p-8 rounded-3xl card-shadow w-full max-w-md playful-border mx-4">
                     <h2 class="text-3xl font-handwritten text-center text-gray-700 dark:text-gray-200 mb-6">Let's track your expenses!</h2>
                     <button onclick="showAccountsScreen()" class="w-16 h-16 bg-gradient-to-br from-softblue to-lightgreen hover:from-blue-400 hover:to-teal-300 text-white rounded-full flex items-center justify-center transition-all duration-300 add-button mx-auto">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,7 +142,7 @@
         </div>
 
         <!-- Accounts Screen -->
-        <div id="accounts-screen" class="hidden flex-col h-full p-6">
+        <div id="accounts-screen" class="hidden flex-col h-full p-4 sm:p-6">
             <div class="flex items-center mb-6">
                 <button onclick="showStartScreen()" class="icon-circle bg-softblue text-white mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -168,7 +193,7 @@
         </div>
 
         <!-- Settings Screen -->
-        <div id="settings-screen" class="hidden flex-col h-full p-6">
+        <div id="settings-screen" class="hidden flex-col h-full p-4 sm:p-6">
             <div class="flex items-center mb-6">
                 <button onclick="showAccountsScreen()" class="icon-circle bg-softblue text-white mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -199,7 +224,7 @@
         </div>
 
         <!-- Bottom Navigation -->
-        <div class="bg-white dark:bg-darkcard p-3 flex justify-around card-shadow">
+        <div class="bg-white dark:bg-darkcard p-2 sm:p-3 flex justify-around card-shadow safe-area-padding">
             <button onclick="showAccountsScreen()" class="flex flex-col items-center">
                 <div class="w-12 h-12 bg-gradient-to-br from-softblue to-lightgreen rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
