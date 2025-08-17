@@ -108,6 +108,26 @@
         body {
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
+
+        /* Specific adjustments for 375-390px screens */
+        @media (max-width: 390px) {
+            #accounts-screen {
+                padding: 0.75rem;
+            }
+            .playful-border {
+                border-radius: 16px;
+            }
+            #expense-name, #expense-amount {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+            .icon-circle {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
         
         /* Prevent iOS form zooming */
         input, textarea, select {
@@ -181,10 +201,10 @@
 
             <div class="bg-white dark:bg-darkcard p-4 rounded-3xl card-shadow playful-border">
                 <div class="flex items-center space-x-2">
-                    <input type="text" id="expense-name" class="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Item name" inputmode="text">
-                    <input type="number" id="expense-amount" class="w-24 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Price" inputmode="decimal">
-                    <button onclick="addExpense()" class="icon-circle bg-lightgreen text-white add-button" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <input type="text" id="expense-name" class="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white text-base" placeholder="Item name" inputmode="text">
+                    <input type="number" id="expense-amount" class="w-28 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white text-base" placeholder="Price" inputmode="decimal">
+                    <button onclick="addExpense()" class="icon-circle bg-lightgreen text-white add-button" style="width: 56px; height: 56px; min-width: 56px; min-height: 56px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                     </button>
