@@ -109,9 +109,9 @@
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
-        /* Specific adjustments for 375-390px screens */
-        @media (max-width: 390px) {
-            #accounts-screen {
+        /* Responsive adjustments for all phone screens */
+        @media (max-width: 640px) {
+            #accounts-screen, #settings-screen {
                 padding: 0.75rem;
             }
             .playful-border {
@@ -120,12 +120,26 @@
             #expense-name, #expense-amount {
                 padding: 0.75rem;
                 font-size: 1rem;
+                min-height: 48px;
             }
             .icon-circle {
                 width: 44px;
                 height: 44px;
                 min-width: 44px;
                 min-height: 44px;
+            }
+            #start-screen h1 {
+                font-size: 2.5rem;
+                margin-top: 1rem;
+            }
+            .bottom-navigation {
+                padding: 0.5rem;
+            }
+            .bottom-navigation button {
+                min-width: 60px;
+            }
+            #salary-display, #remaining-amount {
+                font-size: 2rem;
             }
         }
         
@@ -172,7 +186,7 @@
                 <h1 class="text-3xl font-handwritten text-gray-800 dark:text-gray-200">My Expenses</h1>
             </div>
 
-            <div class="bg-white dark:bg-darkcard p-6 rounded-3xl card-shadow mb-6 playful-border">
+            <div class="bg-white dark:bg-darkcard p-4 sm:p-6 rounded-3xl card-shadow mb-6 playful-border">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-medium text-gray-700 dark:text-gray-300">Total Salary</h2>
                     <button id="edit-salary-btn" class="text-softblue dark:text-lightgreen font-medium">Edit</button>
@@ -186,7 +200,7 @@
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto mb-4">
+            <div class="flex-1 overflow-y-auto mb-4 px-1">
                 <div id="expenses-list" class="space-y-3">
                     <!-- Expenses will be added here dynamically -->
                 </div>
@@ -244,7 +258,7 @@
         </div>
 
         <!-- Bottom Navigation -->
-        <div class="bg-white dark:bg-darkcard p-2 sm:p-3 flex justify-around card-shadow safe-area-padding">
+        <div class="bg-white dark:bg-darkcard p-2 sm:p-3 flex justify-around card-shadow safe-area-padding bottom-navigation">
             <button onclick="showAccountsScreen()" class="flex flex-col items-center">
                 <div class="w-12 h-12 bg-gradient-to-br from-softblue to-lightgreen rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
