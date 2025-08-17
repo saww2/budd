@@ -2,7 +2,7 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Expense Buddy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -63,10 +63,13 @@
         .icon-circle {
             width: 40px;
             height: 40px;
+            min-width: 40px;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
+            -webkit-tap-highlight-color: transparent;
         }
         .add-button {
             transition: all 0.2s ease;
@@ -82,6 +85,15 @@
         }
         .expense-item-exit {
             animation: fadeIn 0.3s reverse forwards, slideUp 0.3s reverse forwards;
+        }
+        /* Prevent zooming on input focus on mobile */
+        input, select, textarea {
+            font-size: 16px;
+        }
+        
+        /* Better touch targets */
+        button, [role="button"] {
+            touch-action: manipulation;
         }
     </style>
 </head>
@@ -144,8 +156,8 @@
 
             <div class="bg-white dark:bg-darkcard p-4 rounded-3xl card-shadow playful-border">
                 <div class="flex items-center space-x-2">
-                    <input type="text" id="expense-name" class="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Item name">
-                    <input type="number" id="expense-amount" class="w-24 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Price">
+                    <input type="text" id="expense-name" class="flex-1 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Item name" inputmode="text">
+                    <input type="number" id="expense-amount" class="w-24 p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-transparent text-gray-800 dark:text-white" placeholder="Price" inputmode="decimal">
                     <button onclick="addExpense()" class="icon-circle bg-lightgreen text-white add-button">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -355,7 +367,9 @@
 
         // Expense functions
         function saveSalary() {
-            const newSalary = parseFloat(salaryInput.value) || 0;
+            // Handle comma decimal separators
+            const sanitizedValue = salaryInput.value.replace(',', '.');
+            const newSalary = parseFloat(sanitizedValue) || 0;
             salary = newSalary;
             salaryEdit.classList.add('hidden');
             salaryDisplay.classList.remove('hidden');
@@ -365,7 +379,9 @@
 
         function addExpense() {
             const name = expenseName.value.trim();
-            const amount = parseFloat(expenseAmount.value) || 0;
+            // Handle comma decimal separators
+            const sanitizedValue = expenseAmount.value.replace(',', '.');
+            const amount = parseFloat(sanitizedValue) || 0;
             
             if (name && amount > 0) {
                 expenses.push({
@@ -389,7 +405,13 @@
         }
 
         // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
+        // Handle both DOMContentLoaded and turbolinks for Rails apps
+        if (document.readyState !== 'loading') {
+            init();
+        } else {
+            document.addEventListener('DOMContentLoaded', init);
+        }
+        document.addEventListener('turbolinks:load', init);
     </script>
-<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=Adelalanezi/expense-buddy" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</body>
 </html>
